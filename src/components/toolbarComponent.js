@@ -8,12 +8,17 @@ const Toolbar = (props) => {
     const [open, setOpen] = useState(false);
 
     const clickedBackIcon = () => {
-        setOpen(!open);
-        if(open) {
-            alert('Open hamburger menu');
+        if(props.screenName === 'AddTask' || props.screenName === 'EditTask') {
+            props.navigation.goBack();
         } else {
             alert('Close hamburger menu');
         }
+        // setOpen(!open);
+        // if(open) {
+        //     alert('Open hamburger menu');
+        // } else {
+        //     alert('Close hamburger menu');
+        // }
     };
 
     const addTask = () => {
@@ -40,10 +45,9 @@ const Toolbar = (props) => {
                     underlayColor={toolbarTouchHighlightColor}
                     style={ styles.backIcon }
                     >
-                        {/* <Icon name="arrowleft" size={35} color="white"/> */}
                         {
-                            open
-                            ? <Icon name="menufold" size={25} color="white"/>
+                            (props.screenName === 'AddTask' || props.screenName === 'EditTask')
+                            ? <Icon name="arrowleft" size={25} color="white"/>
                             : <Icon name="menuunfold" size={25} color="white"/>
                         }
                 </TouchableHighlight>

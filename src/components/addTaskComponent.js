@@ -71,7 +71,7 @@ const AddTask = ({ route, navigation }) => {
 
   return (
     <View style={ styles.mainContainer }>
-        <Toolbar title='ReminderApp' subTitle='List of Tasks' screenName={screenName} addTaskCallback={saveData} editTaskCallback={editData}/>
+        <Toolbar title='ReminderApp' subTitle='List of Tasks' navigation={navigation} screenName={screenName} addTaskCallback={saveData} editTaskCallback={editData}/>
 
         <View style={ styles.innerContainer }>
             <TextInput
