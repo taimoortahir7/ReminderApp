@@ -3,45 +3,18 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { View, Text, Image, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import {buttonColor, linkColor} from '../../assets/colors';
 
-const Login = ({ navigation }) => {
+const Signup = ({ navigation }) => {
 
+    const [name, onChangeName] = useState();
     const [email, onChangeEmail] = useState();
     const [password, onChangePassword] = useState();
 
-    let emailTextInput, passwordTextInput;
-    
-    const navigateToSignup = () => {
-        navigation.navigate('Signup');
+    const navigateToLogin = () => {
+        navigation.navigate('Login');
     };
 
-    const emailChangeFunc = (text) => {
-        if(text.length === 0) {
-            emailTextInput.setNativeProps({
-                borderColor: 'red',
-                borderBottomWidth: 1
-            });
-        } else {
-            emailTextInput.setNativeProps({
-                borderColor: buttonColor,
-                borderBottomWidth: 1
-            });
-            onChangeEmail(text);
-        }
-    };
-
-    const passwordChangeFunc = (text) => {
-        if(text.length === 0) {
-            passwordTextInput.setNativeProps({
-                borderColor: 'red',
-                borderBottomWidth: 1
-            });
-        } else {
-            passwordTextInput.setNativeProps({
-                borderColor: buttonColor,
-                borderBottomWidth: 1
-            });
-            onChangePassword(text);
-        }
+    const onChangeConfirmPassword = (text) => {
+        
     };
 
     const storeData = async () => {
@@ -84,23 +57,34 @@ const Login = ({ navigation }) => {
         <Text style={ styles.appNameText }>Reminder App</Text>
         <TextInput
             style={ styles.textInput }
-            onChangeText={text => emailChangeFunc(text)}
-            placeholder='Email'
-            textContentType='emailAddress'
-            ref={r=>emailTextInput=r}
+            onChangeText={text => onChangeName(text)}
+            placeholder='Full Name'
+            textContentType='name'
         />
         <TextInput
             style={ styles.textInput }
-            onChangeText={text => passwordChangeFunc(text)}
+            onChangeText={text => onChangeEmail(text)}
+            placeholder='Email'
+            textContentType='emailAddress'
+        />
+        <TextInput
+            style={ styles.textInput }
+            onChangeText={text => onChangePassword(text)}
             placeholder='Password'
             textContentType='password'
             secureTextEntry={true}
-            ref={r=>passwordTextInput=r}
+        />
+        <TextInput
+            style={ styles.textInput }
+            onChangeText={text => onChangeConfirmPassword(text)}
+            placeholder='Confirm Password'
+            textContentType='password'
+            secureTextEntry={true}
         />
         <TouchableOpacity style={ styles.placeholderButton } onPress={getData}>
-            <Text style={ styles.buttonText }>LOGIN</Text>
+            <Text style={ styles.buttonText }>SIGN UP</Text>
         </TouchableOpacity>
-        <Text style={ styles.signupText }>Don't have account? <Text style={ styles.signupLink } onPress={navigateToSignup}>Signup</Text></Text>
+        <Text style={ styles.loginText }>Already have an account? <Text style={ styles.loginLink } onPress={navigateToLogin}>Login</Text></Text>
     </View>
   );
 };
@@ -137,12 +121,12 @@ const styles = StyleSheet.create({
         width: 300,
         marginVertical: 10
     },
-    signupText: {
+    loginText: {
         marginVertical: 15
     },
-    signupLink: {
+    loginLink: {
         color: linkColor
     }
 });
 
-export default Login;
+export default Signup;

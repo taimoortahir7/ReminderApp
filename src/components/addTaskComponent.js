@@ -12,6 +12,8 @@ const AddTask = ({ route, navigation }) => {
     const { screenName } = route.params;
     const { item } = route.params || undefined;
 
+    let titleTextInput, descriptionTextInput;
+
     const [title, onChangeTitle] = useState(item?.title || '');
     const [description, onChangeDescription] = useState(item?.description || '');
     const [date, setDate] = useState(item?.date || moment(new Date()).format("DD-MM-YYYY"));
@@ -26,39 +28,94 @@ const AddTask = ({ route, navigation }) => {
         }
     };
 
-    const saveData = () => {
-        const newReference = database().ref('Task').push();
+    const titleChangeFunc = (text) => {
+        if(text.length === 0) {
+            titleTextInput.setNativeProps({
+                borderColor: 'red',
+                borderBottomWidth: 1
+            });
+        } else {
+            titleTextInput.setNativeProps({
+                borderColor: buttonColor,
+                borderBottomWidth: 1
+            });
+            onChangeTitle(text);
+        }
+    };
 
-        newReference.set({
-            title: title,
-            description: description,
-            date: date,
-            time: time,
-            taskType: taskType
-        })
-        .then(() => {
-            console.log('Data Set!');
-            notifyMessage('Task added successfully !');
-            navigation.goBack();
-        });
+    const descriptionChangeFunc = (text) => {
+        if(text.length === 0) {
+            descriptionTextInput.setNativeProps({
+                borderColor: 'red',
+                borderBottomWidth: 1
+            });
+        } else {
+            descriptionTextInput.setNativeProps({
+                borderColor: buttonColor,
+                borderBottomWidth: 1
+            });
+            onChangeDescription(text);
+        }
+    };
+
+    const checkFeildsValidity = () => {
+        if(title.length === 0) {
+            titleTextInput.setNativeProps({
+                borderColor: 'red',
+                borderBottomWidth: 1
+            });
+            return false;
+        }
+
+        if(description.length === 0) {
+            descriptionTextInput.setNativeProps({
+                borderColor: 'red',
+                borderBottomWidth: 1
+            });
+            return false;
+        }
+
+        return true;
+    };
+
+    const saveData = () => {
+
+        if(checkFeildsValidity()) {
+            const newReference = database().ref('Task').push();
+
+            newReference.set({
+                title: title,
+                description: description,
+                date: date,
+                time: time,
+                taskType: taskType
+            })
+            .then(() => {
+                console.log('Data Set!');
+                notifyMessage('Task added successfully !');
+                navigation.goBack();
+            });
+        }
     };
 
     const editData = () => {
 
-        database()
-        .ref('Task/' + item?.key)
-        .update({
-            title: title,
-            description: description,
-            date: date,
-            time: time,
-            taskType: taskType
-        })
-        .then(() => {
-            console.log('Data Set!');
-            notifyMessage('Task updated successfully !');
-            navigation.goBack();
-        });
+        if(checkFeildsValidity()) {
+            database()
+            .ref('Task/' + item?.key)
+            .update({
+                title: title,
+                description: description,
+                date: date,
+                time: time,
+                taskType: taskType
+            })
+            .then(() => {
+                console.log('Data Set!');
+                notifyMessage('Task updated successfully !');
+                navigation.goBack();
+            });
+        }
     };
 
     const notifyMessage = (msg) => {
@@ -76,11 +133,12 @@ const AddTask = ({ route, navigation }) => {
         <View style={ styles.innerContainer }>
             <TextInput
                 style={ styles.textInput }
-                onChangeText={text => onChangeTitle(text)}
+                onChangeText={text => titleChangeFunc(text)}
                 placeholder='Title'
                 textContentType='jobTitle'
                 maxLength={20}
                 defaultValue={item?.title || undefined}
+                ref={r=>titleTextInput=r}
             />
 
             <DateTimeComponent dateTimeCallBack={dateTimeRenderer} date={item?.date || undefined} time={item?.time || undefined}/>
@@ -102,11 +160,12 @@ const AddTask = ({ route, navigation }) => {
 
             <TextInput
                 style={ styles.textInput }
-                onChangeText={text => onChangeDescription(text)}
+                onChangeText={text => descriptionChangeFunc(text)}
                 placeholder='One line description'
                 textContentType='jobTitle'
                 maxLength={50}
                 defaultValue={item?.description || undefined}
+                ref={r=>descriptionTextInput=r}
             />
   
         </View>

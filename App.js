@@ -12,8 +12,8 @@ import ToDoList from './src/components/listComponent';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Login from './src/components/loginComponent';
-import {secondaryColor} from './assets/colors';
 import AddTask from './src/components/addTaskComponent';
+import Signup from './src/components/signupComponent';
 
 const App: () => React$Node = () => {
 
@@ -22,19 +22,13 @@ const App: () => React$Node = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName='Login'
+        initialRouteName='Signup'
         screenOptions={{
-          headerStyle: {
-            backgroundColor: secondaryColor,
-          },
-          headerTintColor: 'white',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
           headerShown: false
         }}
       >
         <Stack.Screen name='ToDoList' component={ToDoList}/>
+        <Stack.Screen name='Signup' component={Signup}/>
         <Stack.Screen name='Login' component={Login}/>
         <Stack.Screen name='AddTask' component={AddTask}/>
       </Stack.Navigator>
