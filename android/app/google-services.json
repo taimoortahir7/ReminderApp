@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "700463736114",
+    "firebase_url": "https://reminder-app-ea9f7.firebaseio.com",
+    "project_id": "reminder-app-ea9f7",
+    "storage_bucket": "reminder-app-ea9f7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:700463736114:android:dd8242a654627b2835a32b",
+        "android_client_info": {
+          "package_name": "com.reminderapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "700463736114-srnrop30b0j6eji7rlrfc0nhqq1ukuvp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3YFlkP0F9to91GcehG_BG3RxkC4TXYc8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "700463736114-srnrop30b0j6eji7rlrfc0nhqq1ukuvp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
