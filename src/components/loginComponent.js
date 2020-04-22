@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import { View, Text, Image, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import {buttonColor, linkColor} from '../../assets/colors';
+import {textInputChangeFunc, checkFieldsValidity} from './../commons/fieldsValidation';
 
 const Login = ({ navigation }) => {
 
-    const [email, onChangeEmail] = useState();
-    const [password, onChangePassword] = useState();
+    const [email, onChangeEmail] = useState('');
+    const [password, onChangePassword] = useState('');
 
     let emailTextInput, passwordTextInput;
     
@@ -14,32 +15,11 @@ const Login = ({ navigation }) => {
         navigation.navigate('Signup');
     };
 
-    const emailChangeFunc = (text) => {
-        if(text.length === 0) {
-            emailTextInput.setNativeProps({
-                borderColor: 'red',
-                borderBottomWidth: 1
-            });
-        } else {
-            emailTextInput.setNativeProps({
-                borderColor: buttonColor,
-                borderBottomWidth: 1
-            });
+    const fieldValueChangeFunc = (text, titleTextInput, type) => {
+        textInputChangeFunc(text, titleTextInput);
+        if(type === 'email') {
             onChangeEmail(text);
-        }
-    };
-
-    const passwordChangeFunc = (text) => {
-        if(text.length === 0) {
-            passwordTextInput.setNativeProps({
-                borderColor: 'red',
-                borderBottomWidth: 1
-            });
-        } else {
-            passwordTextInput.setNativeProps({
-                borderColor: buttonColor,
-                borderBottomWidth: 1
-            });
+        } else if(type === 'password') {
             onChangePassword(text);
         }
     };
@@ -55,27 +35,39 @@ const Login = ({ navigation }) => {
     }
 
     const getData = async () => {
-        try {
-            const emailValue = await AsyncStorage.getItem('@email');
-            const passwordValue = await AsyncStorage.getItem('@password');
-            if(!emailValue && !passwordValue) {
-                await storeData();
-
-                // add params including screen name
-                navigation.navigate('ToDoList', {
-                    screenName: 'ToDoList'
-                });
-
-            } else {
-                if(emailValue === email && passwordValue === password) {
+        const fields = [
+            {
+                value: email,
+                reference: emailTextInput
+            },
+            {
+                value: password,
+                reference: passwordTextInput
+            }
+        ];
+        if(checkFieldsValidity(fields)) {
+            try {
+                const emailValue = await AsyncStorage.getItem('@email');
+                const passwordValue = await AsyncStorage.getItem('@password');
+                if(!emailValue && !passwordValue) {
+                    await storeData();
+    
                     // add params including screen name
                     navigation.navigate('ToDoList', {
                         screenName: 'ToDoList'
                     });
+    
+                } else {
+                    if(emailValue === email && passwordValue === password) {
+                        // add params including screen name
+                        navigation.navigate('ToDoList', {
+                            screenName: 'ToDoList'
+                        });
+                    }
                 }
+            } catch(e) {
+                console.log('error: ', e);
             }
-        } catch(e) {
-            console.log('error: ', e);
         }
     }
 
@@ -84,14 +76,14 @@ const Login = ({ navigation }) => {
         <Text style={ styles.appNameText }>Reminder App</Text>
         <TextInput
             style={ styles.textInput }
-            onChangeText={text => emailChangeFunc(text)}
+            onChangeText={text => fieldValueChangeFunc(text, emailTextInput, 'email')}
             placeholder='Email'
             textContentType='emailAddress'
             ref={r=>emailTextInput=r}
         />
         <TextInput
             style={ styles.textInput }
-            onChangeText={text => passwordChangeFunc(text)}
+            onChangeText={text => fieldValueChangeFunc(text, passwordTextInput, 'password')}
             placeholder='Password'
             textContentType='password'
             secureTextEntry={true}

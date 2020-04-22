@@ -22,11 +22,11 @@ const Toolbar = (props) => {
     };
 
     const addTask = () => {
-        props.addTaskCallback();
+        props.taskDataCallback('addData');
     };
 
     const editTask = () => {
-        props.editTaskCallback();
+        props.taskDataCallback('editData');
     };
 
     const navigateToAddTask = () => {

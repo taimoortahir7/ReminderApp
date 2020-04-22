@@ -6,6 +6,7 @@ import {buttonColor, secondaryColor} from '../../assets/colors';
 import Toolbar from './toolbarComponent';
 import DateTimeComponent from './dateTimeComponent';
 import moment from "moment";
+import {textInputChangeFunc, checkFieldsValidity} from './../commons/fieldsValidation';
 
 const AddTask = ({ route, navigation }) => {
 
@@ -28,93 +29,59 @@ const AddTask = ({ route, navigation }) => {
         }
     };
 
-    const titleChangeFunc = (text) => {
-        if(text.length === 0) {
-            titleTextInput.setNativeProps({
-                borderColor: 'red',
-                borderBottomWidth: 1
-            });
-        } else {
-            titleTextInput.setNativeProps({
-                borderColor: buttonColor,
-                borderBottomWidth: 1
-            });
+    const fieldValueChangeFunc = (text, titleTextInput, type) => {
+        textInputChangeFunc(text, titleTextInput);
+        if(type === 'title') {
             onChangeTitle(text);
-        }
-    };
-
-    const descriptionChangeFunc = (text) => {
-        if(text.length === 0) {
-            descriptionTextInput.setNativeProps({
-                borderColor: 'red',
-                borderBottomWidth: 1
-            });
-        } else {
-            descriptionTextInput.setNativeProps({
-                borderColor: buttonColor,
-                borderBottomWidth: 1
-            });
+        } else if(type === 'description') {
             onChangeDescription(text);
         }
     };
 
-    const checkFeildsValidity = () => {
-        if(title.length === 0) {
-            titleTextInput.setNativeProps({
-                borderColor: 'red',
-                borderBottomWidth: 1
-            });
-            return false;
-        }
+    const submitData = (type) => {
+        const fields = [
+            {
+                value: title,
+                reference: titleTextInput
+            },
+            {
+                value: description,
+                reference: descriptionTextInput
+            }
+        ];
+        if(checkFieldsValidity(fields)) {
+            if(type === 'addData') {
+                const newReference = database().ref('Task').push();
 
-        if(description.length === 0) {
-            descriptionTextInput.setNativeProps({
-                borderColor: 'red',
-                borderBottomWidth: 1
-            });
-            return false;
-        }
+                newReference.set({
+                    title: title,
+                    description: description,
+                    date: date,
+                    time: time,
+                    taskType: taskType
+                })
+                .then(() => {
+                    console.log('Data Set!');
+                    notifyMessage('Task added successfully !');
+                    navigation.goBack();
+                });
 
-        return true;
-    };
-
-    const saveData = () => {
-
-        if(checkFeildsValidity()) {
-            const newReference = database().ref('Task').push();
-
-            newReference.set({
-                title: title,
-                description: description,
-                date: date,
-                time: time,
-                taskType: taskType
-            })
-            .then(() => {
-                console.log('Data Set!');
-                notifyMessage('Task added successfully !');
-                navigation.goBack();
-            });
-        }
-    };
-
-    const editData = () => {
-
-        if(checkFeildsValidity()) {
-            database()
-            .ref('Task/' + item?.key)
-            .update({
-                title: title,
-                description: description,
-                date: date,
-                time: time,
-                taskType: taskType
-            })
-            .then(() => {
-                console.log('Data Set!');
-                notifyMessage('Task updated successfully !');
-                navigation.goBack();
-            });
+            } else if(type === 'editData') {
+                database()
+                .ref('Task/' + item?.key)
+                .update({
+                    title: title,
+                    description: description,
+                    date: date,
+                    time: time,
+                    taskType: taskType
+                })
+                .then(() => {
+                    console.log('Data Set!');
+                    notifyMessage('Task updated successfully !');
+                    navigation.goBack();
+                });
+            }
         }
     };
 
@@ -128,12 +95,18 @@ const AddTask = ({ route, navigation }) => {
 
   return (
     <View style={ styles.mainContainer }>
-        <Toolbar title='ReminderApp' subTitle='List of Tasks' navigation={navigation} screenName={screenName} addTaskCallback={saveData} editTaskCallback={editData}/>
+        <Toolbar
+            title='ReminderApp' 
+            subTitle='List of Tasks' 
+            navigation={navigation} 
+            screenName={screenName} 
+            taskDataCallback={submitData} 
+        />
 
         <View style={ styles.innerContainer }>
             <TextInput
                 style={ styles.textInput }
-                onChangeText={text => titleChangeFunc(text)}
+                onChangeText={text => fieldValueChangeFunc(text, titleTextInput, 'title')}
                 placeholder='Title'
                 textContentType='jobTitle'
                 maxLength={20}
@@ -160,7 +133,7 @@ const AddTask = ({ route, navigation }) => {
 
             <TextInput
                 style={ styles.textInput }
-                onChangeText={text => descriptionChangeFunc(text)}
+                onChangeText={text => fieldValueChangeFunc(text, descriptionTextInput, 'description')}
                 placeholder='One line description'
                 textContentType='jobTitle'
                 maxLength={50}

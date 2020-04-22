@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import { View, Text, Image, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import {buttonColor, linkColor} from '../../assets/colors';
+import {textInputChangeFunc, checkFieldsValidity} from './../commons/fieldsValidation';
 
 const Signup = ({ navigation }) => {
 
     const [name, onChangeName] = useState();
     const [email, onChangeEmail] = useState();
     const [password, onChangePassword] = useState();
+    const [ConfPassword, onChangeConfPassword] = useState();
+
+    let nameTextInput, emailTextInput, passwordTextInput, CPasswordTextInput;
 
     const navigateToLogin = () => {
         navigation.navigate('Login');
@@ -15,6 +19,30 @@ const Signup = ({ navigation }) => {
 
     const onChangeConfirmPassword = (text) => {
         
+    };
+
+    const fieldValueChangeFunc = (text, titleTextInput, type) => {
+        textInputChangeFunc(text, titleTextInput);
+        if(type === 'name') {
+            onChangeName(text);
+        } else if(type === 'email') {
+            onChangeEmail(text);
+        } else if(type === 'password') {
+            onChangePassword(text);
+        } else if(type === 'conf_password') {
+            onChangeConfPassword(text);
+            if(password === ConfPassword) {
+                titleTextInput.setNativeProps({
+                    borderColor: buttonColor,
+                    borderBottomWidth: 1
+                });
+            } else {
+                titleTextInput.setNativeProps({
+                    borderColor: 'red',
+                    borderBottomWidth: 1
+                });
+            }
+        }
     };
 
     const storeData = async () => {
@@ -57,29 +85,33 @@ const Signup = ({ navigation }) => {
         <Text style={ styles.appNameText }>Reminder App</Text>
         <TextInput
             style={ styles.textInput }
-            onChangeText={text => onChangeName(text)}
+            onChangeText={text => fieldValueChangeFunc(text, nameTextInput, 'name')}
             placeholder='Full Name'
             textContentType='name'
+            ref={r=>nameTextInput=r}
         />
         <TextInput
             style={ styles.textInput }
-            onChangeText={text => onChangeEmail(text)}
+            onChangeText={text => fieldValueChangeFunc(text, emailTextInput, 'email')}
             placeholder='Email'
             textContentType='emailAddress'
+            ref={r=>emailTextInput=r}
         />
         <TextInput
             style={ styles.textInput }
-            onChangeText={text => onChangePassword(text)}
+            onChangeText={text => fieldValueChangeFunc(text, passwordTextInput, 'password')}
             placeholder='Password'
             textContentType='password'
             secureTextEntry={true}
+            ref={r=>passwordTextInput=r}
         />
         <TextInput
             style={ styles.textInput }
-            onChangeText={text => onChangeConfirmPassword(text)}
+            onChangeText={text => fieldValueChangeFunc(text, CPasswordTextInput, 'conf_password')}
             placeholder='Confirm Password'
             textContentType='password'
             secureTextEntry={true}
+            ref={r=>CPasswordTextInput=r}
         />
         <TouchableOpacity style={ styles.placeholderButton } onPress={getData}>
             <Text style={ styles.buttonText }>SIGN UP</Text>
