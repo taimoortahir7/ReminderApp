@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
-import AsyncStorage from '@react-native-community/async-storage';
 import { View, Text, Image, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import {buttonColor, linkColor} from '../../assets/colors';
 import {textInputChangeFunc, checkFieldsValidity} from './../commons/fieldsValidation';
+import auth from '@react-native-firebase/auth';
+import validation from './../../utils/errorMessages';
 
 const Login = ({ navigation }) => {
 
     const [email, onChangeEmail] = useState('');
     const [password, onChangePassword] = useState('');
+
+    const [emptyEmailField, onChangeEmptyEmailField] = useState(false);
+    const [emptyPasswordField, onChangeEmptyPasswordField] = useState(false);
+    const [invalidEmailField, onInvalidEmailField] = useState(false);
+    const [wrongEmailField, onWrongEmailField] = useState(false);
+    const [invalidPassField, onInvalidPassField] = useState(false);
 
     let emailTextInput, passwordTextInput;
     
@@ -16,23 +23,14 @@ const Login = ({ navigation }) => {
     };
 
     const fieldValueChangeFunc = (text, titleTextInput, type) => {
-        textInputChangeFunc(text, titleTextInput);
         if(type === 'email') {
+            onChangeEmptyEmailField(textInputChangeFunc(text, titleTextInput));
             onChangeEmail(text);
         } else if(type === 'password') {
+            onChangeEmptyPasswordField(textInputChangeFunc(text, titleTextInput));
             onChangePassword(text);
         }
     };
-
-    const storeData = async () => {
-        try {
-            await AsyncStorage.setItem('@email', email);
-            await AsyncStorage.setItem('@password', password);
-            
-        } catch (e) {
-            await AsyncStorage.setItem('@error', e);
-        }
-    }
 
     const getData = async () => {
         const fields = [
@@ -47,24 +45,33 @@ const Login = ({ navigation }) => {
         ];
         if(checkFieldsValidity(fields)) {
             try {
-                const emailValue = await AsyncStorage.getItem('@email');
-                const passwordValue = await AsyncStorage.getItem('@password');
-                if(!emailValue && !passwordValue) {
-                    await storeData();
-    
+                auth()
+                .signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    console.log('User account signed in!');
                     // add params including screen name
                     navigation.navigate('ToDoList', {
                         screenName: 'ToDoList'
                     });
-    
-                } else {
-                    if(emailValue === email && passwordValue === password) {
-                        // add params including screen name
-                        navigation.navigate('ToDoList', {
-                            screenName: 'ToDoList'
-                        });
+                })
+                .catch(error => {
+                    if (error.code === 'auth/wrong-password') {
+                        console.log('The password is invalid or the user does not have a password.');
+                        onInvalidPassField(true);
                     }
-                }
+
+                    if (error.code === 'auth/invalid-email') {
+                        console.log('That email address is invalid!');
+                        onInvalidEmailField(true);
+                    }
+
+                    if (error.code === 'auth/user-not-found') {
+                        console.log('There is no user record corresponding to this identifier.');
+                        onWrongEmailField(true);
+                    }
+
+                    console.error(error);
+                });
             } catch(e) {
                 console.log('error: ', e);
             }
@@ -81,6 +88,10 @@ const Login = ({ navigation }) => {
             textContentType='emailAddress'
             ref={r=>emailTextInput=r}
         />
+        {emptyEmailField && <Text style={ styles.errorMessage }>{validation.email.empty.message}</Text>}
+        {invalidEmailField && <Text style={ styles.errorMessage }>{validation.email.incorrect.message}</Text>}
+        {wrongEmailField && <Text style={ styles.errorMessage }>{validation.email.wrong.message}</Text>}
+
         <TextInput
             style={ styles.textInput }
             onChangeText={text => fieldValueChangeFunc(text, passwordTextInput, 'password')}
@@ -89,6 +100,9 @@ const Login = ({ navigation }) => {
             secureTextEntry={true}
             ref={r=>passwordTextInput=r}
         />
+        {emptyPasswordField && <Text style={ styles.errorMessage }>{validation.password.empty.message}</Text>}
+        {invalidPassField && <Text style={ styles.errorMessage }>{validation.password.wrong.message}</Text>}
+
         <TouchableOpacity style={ styles.placeholderButton } onPress={getData}>
             <Text style={ styles.buttonText }>LOGIN</Text>
         </TouchableOpacity>
@@ -134,6 +148,9 @@ const styles = StyleSheet.create({
     },
     signupLink: {
         color: linkColor
+    },
+    errorMessage: {
+        color: 'red'
     }
 });
 
