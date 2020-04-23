@@ -7,10 +7,10 @@ import validation from './../../utils/errorMessages';
 
 const Signup = ({ navigation }) => {
 
-    const [name, onChangeName] = useState();
-    const [email, onChangeEmail] = useState();
-    const [password, onChangePassword] = useState();
-    const [ConfPassword, onChangeConfPassword] = useState();
+    const [name, onChangeName] = useState('');
+    const [email, onChangeEmail] = useState('');
+    const [password, onChangePassword] = useState('');
+    const [ConfPassword, onChangeConfPassword] = useState('');
 
     const [emptyNameField, onChangeEmptyNameField] = useState(false);
     const [emptyEmailField, onChangeEmptyEmailField] = useState(false);
@@ -51,7 +51,14 @@ const Signup = ({ navigation }) => {
         }
     };
 
+    const clearErrors = () => {
+        onAlreadyInUseField(false);
+        onInvalidEmailField(false);
+        onInvalidPassField(false);
+    };
+
     const signup = () => {
+        clearErrors();
         const fields = [
             {
                 value: name,

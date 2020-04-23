@@ -32,7 +32,14 @@ const Login = ({ navigation }) => {
         }
     };
 
+    const clearErrors = () => {
+        onWrongEmailField(false);
+        onInvalidEmailField(false);
+        onInvalidPassField(false);
+    };
+
     const getData = async () => {
+        clearErrors();
         const fields = [
             {
                 value: email,
@@ -44,37 +51,33 @@ const Login = ({ navigation }) => {
             }
         ];
         if(checkFieldsValidity(fields)) {
-            try {
-                auth()
-                .signInWithEmailAndPassword(email, password)
-                .then(() => {
-                    console.log('User account signed in!');
-                    // add params including screen name
-                    navigation.navigate('ToDoList', {
-                        screenName: 'ToDoList'
-                    });
-                })
-                .catch(error => {
-                    if (error.code === 'auth/wrong-password') {
-                        console.log('The password is invalid or the user does not have a password.');
-                        onInvalidPassField(true);
-                    }
-
-                    if (error.code === 'auth/invalid-email') {
-                        console.log('That email address is invalid!');
-                        onInvalidEmailField(true);
-                    }
-
-                    if (error.code === 'auth/user-not-found') {
-                        console.log('There is no user record corresponding to this identifier.');
-                        onWrongEmailField(true);
-                    }
-
-                    console.error(error);
+            auth()
+            .signInWithEmailAndPassword(email, password)
+            .then(() => {
+                console.log('User account signed in!');
+                // add params including screen name
+                navigation.navigate('ToDoList', {
+                    screenName: 'ToDoList'
                 });
-            } catch(e) {
-                console.log('error: ', e);
-            }
+            })
+            .catch(error => {
+                if (error.code === 'auth/wrong-password') {
+                    console.log('The password is invalid or the user does not have a password.');
+                    onInvalidPassField(true);
+                }
+
+                if (error.code === 'auth/invalid-email') {
+                    console.log('That email address is invalid!');
+                    onInvalidEmailField(true);
+                }
+
+                if (error.code === 'auth/user-not-found') {
+                    console.log('There is no user record corresponding to this identifier.');
+                    onWrongEmailField(true);
+                }
+
+                console.error(error);
+            });
         }
     }
 
