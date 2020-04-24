@@ -7,6 +7,7 @@ import Toolbar from './toolbarComponent';
 import DateTimeComponent from './dateTimeComponent';
 import moment from "moment";
 import {textInputChangeFunc, checkFieldsValidity} from './../commons/fieldsValidation';
+import ReactNativeAN from 'react-native-alarm-notification';
 
 const AddTask = ({ route, navigation }) => {
 
@@ -20,6 +21,23 @@ const AddTask = ({ route, navigation }) => {
     const [date, setDate] = useState(item?.date || moment(new Date()).format("DD-MM-YYYY"));
     const [time, setTime] = useState(item?.time || moment(new Date()).format("hh:mm:ss"));
     const [taskType, setTaskType] = useState(item?.taskType || "exersice");
+
+    const fireDate = date + ' ' + time;	
+
+    const alarmNotifData = {
+        alarm_id: 1,
+        title: title,
+        message: description,
+        channel: "my_channel_id",
+        small_icon: "ic_launcher",
+        color: secondaryColor,
+        fire_date: fireDate,
+        schedule_type: 'once',
+        // You can add any additional data that is important for the notification
+        // It will be added to the PendingIntent along with the rest of the bundle.
+        // e.g.
+        data: { foo: "bar" }
+    };
 
     const dateTimeRenderer = (value, mode) => {
         if(mode === 'date') {
@@ -62,6 +80,10 @@ const AddTask = ({ route, navigation }) => {
                 })
                 .then(() => {
                     console.log('Data Set!');
+                    //Schedule Future Alarm
+                    ReactNativeAN.scheduleAlarm(alarmNotifData);
+                    //Send Local Notification Now
+                    // ReactNativeAN.sendNotification(alarmNotifData);
                     notifyMessage('Task added successfully !');
                     navigation.goBack();
                 });

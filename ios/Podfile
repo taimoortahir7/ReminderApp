@@ -60,6 +60,8 @@ target 'ReminderApp' do
 
   pod 'RNCPicker', :path => '../node_modules/@react-native-community/picker'
 
+  pod 'react-native-alarm-notification', :path => '../node_modules/react-native-alarm-notification'
+
   target 'ReminderAppTests' do
     inherit! :complete
     # Pods for testing
