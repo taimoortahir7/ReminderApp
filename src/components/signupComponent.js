@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TextInput, Button, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import {buttonColor, linkColor} from '../../assets/colors';
 import {textInputChangeFunc, checkFieldsValidity} from './../commons/fieldsValidation';
 import auth from '@react-native-firebase/auth';
@@ -18,6 +18,8 @@ const Signup = ({ navigation }) => {
     const [alreadyInUseField, onAlreadyInUseField] = useState(false);
     const [invalidEmailField, onInvalidEmailField] = useState(false);
     const [invalidPassField, onInvalidPassField] = useState(false);
+
+    const [loadingText, setLoadingText] = useState(false);
     
     let nameTextInput, emailTextInput, passwordTextInput, CPasswordTextInput;
 
@@ -25,14 +27,22 @@ const Signup = ({ navigation }) => {
         navigation.navigate('Login');
     };
 
+    const clearErrors = () => {
+        onAlreadyInUseField(false);
+        onInvalidEmailField(false);
+        onInvalidPassField(false);
+    };
+
     const fieldValueChangeFunc = (text, titleTextInput, type) => {
         if(type === 'name') {
             onChangeEmptyNameField(textInputChangeFunc(text, titleTextInput));
             onChangeName(text);
         } else if(type === 'email') {
+            clearErrors();
             onChangeEmptyEmailField(textInputChangeFunc(text, titleTextInput));
             onChangeEmail(text);
         } else if(type === 'password') {
+            clearErrors();
             onChangeEmptyPasswordField(textInputChangeFunc(text, titleTextInput));
             onChangePassword(text);
         } else if(type === 'conf_password') {
@@ -51,14 +61,9 @@ const Signup = ({ navigation }) => {
         }
     };
 
-    const clearErrors = () => {
-        onAlreadyInUseField(false);
-        onInvalidEmailField(false);
-        onInvalidPassField(false);
-    };
-
     const signup = () => {
         clearErrors();
+        setLoadingText(true);
         const fields = [
             {
                 value: name,
@@ -82,6 +87,7 @@ const Signup = ({ navigation }) => {
             .createUserWithEmailAndPassword(email, password)
             .then(() => {
                 console.log('User account created & signed in!');
+                setLoadingText(false);
                 // add params including screen name
                 navigation.navigate('ToDoList', {
                     screenName: 'ToDoList'
@@ -103,8 +109,11 @@ const Signup = ({ navigation }) => {
                     onInvalidPassField(true);
                 }
 
+                setLoadingText(false);
                 console.error(error);
             });
+        } else {
+            setLoadingText(false);
         }
     };
 
@@ -152,7 +161,19 @@ const Signup = ({ navigation }) => {
         />
 
         <TouchableOpacity style={ styles.placeholderButton } onPress={signup}>
-            <Text style={ styles.buttonText }>SIGN UP</Text>
+            {
+                !loadingText && (
+                    <Text style={ styles.buttonText }>SIGN UP</Text>
+                )
+            }
+            {
+                loadingText && (
+                <View style={ styles.loadingState }>
+                    <Text style={ styles.buttonText }>SIGNING UP...</Text>
+                    <ActivityIndicator size="small" color='white' />
+                </View>
+                )
+            }
         </TouchableOpacity>
         <Text style={ styles.loginText }>Already have an account? <Text style={ styles.loginLink } onPress={navigateToLogin}>Login</Text></Text>
     </View>
@@ -199,6 +220,11 @@ const styles = StyleSheet.create({
     },
     errorMessage: {
         color: 'red'
+    },
+    loadingState: {
+        width: 150,
+        flexDirection: 'row',
+        justifyContent: 'space-evenly'
     }
 });
 

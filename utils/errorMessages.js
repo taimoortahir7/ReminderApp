@@ -21,7 +21,10 @@ const validation = {
             message: 'Password should be at least 6 characters!'
         },
         wrong: {
-            message: 'Password is invalid or user does not have a password!'
+            message: 'Wrong password!'
+        },
+        unknown: {
+            message: 'Too many unsuccessful attempts. Try again later!'
         }
     },
     textFields: {
