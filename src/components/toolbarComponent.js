@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableHighlight } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
+import IconFontisto from 'react-native-vector-icons/Fontisto';
 import {secondaryColor, toolbarTouchHighlightColor, subTitleColor} from '../../assets/colors';
 
 const Toolbar = (props) => {
@@ -29,6 +30,10 @@ const Toolbar = (props) => {
         props.taskDataCallback('editData');
     };
 
+    const profileMenu = () => {
+
+    };
+
     const navigateToAddTask = () => {
         // add params including screen name
         props.navigation.navigate('AddTask', {
@@ -39,26 +44,48 @@ const Toolbar = (props) => {
     return (
         <View style={ styles.mainContainer }>
             <View style={ styles.backIconContainer }>
+                {
+                    (props.screenName === 'AddTask' || props.screenName === 'EditTask') && (
+                        <TouchableHighlight
+                        onPress={clickedBackIcon}
+                        activeOpacity={1}
+                        underlayColor={toolbarTouchHighlightColor}
+                        style={ styles.backIcon }
+                        >
+                            <Icon name="arrowleft" size={25} color="white"/>
+                        </TouchableHighlight>
+                    )
+                }
+            </View>
+            <View style={ styles.infoContainer }>
+                <Text style={ styles.title }>{props.title}</Text>
+                {/* <Text style={ styles.subTitle }>{props.subTitle}</Text> */}
+            </View>
+
+            {
+                (props.screenName === 'AddTask' || props.screenName === 'EditTask') && (
                 <TouchableHighlight
-                    onPress={clickedBackIcon}
+                    onPress={(props.screenName === 'AddTask') ? addTask : editTask}
                     activeOpacity={1}
                     underlayColor={toolbarTouchHighlightColor}
                     style={ styles.backIcon }
                     >
-                        {
-                            (props.screenName === 'AddTask' || props.screenName === 'EditTask')
-                            ? <Icon name="arrowleft" size={25} color="white"/>
-                            : <Icon name="menuunfold" size={25} color="white"/>
-                        }
-                </TouchableHighlight>
-            </View>
-            <View style={ styles.infoContainer }>
-                <Text style={ styles.title }>{props.title}</Text>
-                <Text style={ styles.subTitle }>{props.subTitle}</Text>
-            </View>
-
+                        <Icon name="check" size={25} color="white"/>
+                </TouchableHighlight>)
+            }
             {
-                (props.screenName !== 'AddTask' && props.screenName !== 'EditTask') && (
+                (props.screenName === 'Profile') && (
+                <TouchableHighlight
+                    onPress={profileMenu}
+                    activeOpacity={1}
+                    underlayColor={toolbarTouchHighlightColor}
+                    style={ styles.menuIcon }
+                    >
+                        <IconFontisto name="more-v-a" size={23} color="white"/>
+                </TouchableHighlight>)
+            }
+            {
+                (props.screenName !== 'AddTask' && props.screenName !== 'EditTask' && props.screenName !== 'Profile') && (
                 <TouchableHighlight
                     onPress={navigateToAddTask}
                     activeOpacity={1}
@@ -68,28 +95,6 @@ const Toolbar = (props) => {
                         <Icon name="plus" size={25} color="white"/>
                 </TouchableHighlight>)
             
-            }
-            {
-                (props.screenName === 'AddTask') && (
-                <TouchableHighlight
-                    onPress={addTask}
-                    activeOpacity={1}
-                    underlayColor={toolbarTouchHighlightColor}
-                    style={ styles.backIcon }
-                    >
-                        <Icon name="check" size={25} color="white"/>
-                </TouchableHighlight>)
-            }
-            {
-                (props.screenName === 'EditTask') && (
-                <TouchableHighlight
-                    onPress={editTask}
-                    activeOpacity={1}
-                    underlayColor={toolbarTouchHighlightColor}
-                    style={ styles.backIcon }
-                    >
-                        <Icon name="check" size={25} color="white"/>
-                </TouchableHighlight>)
             }
 
         </View>
@@ -113,6 +118,10 @@ const styles = StyleSheet.create({
     backIcon: {
         borderRadius: 30,
         padding: 15
+    },
+    menuIcon: {
+        borderRadius: 50,
+        padding: 15, 25
     },
     title: {
         fontSize: 23,

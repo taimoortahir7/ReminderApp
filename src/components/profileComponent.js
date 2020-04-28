@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { View, Text, Image, TextInput, Button, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import {buttonColor, linkColor, secondaryColor} from '../../assets/colors';
 import {textInputChangeFunc, checkFieldsValidity} from './../commons/fieldsValidation';
+import Toolbar from './toolbarComponent';
 import auth from '@react-native-firebase/auth';
 import validation from './../../utils/errorMessages';
 
-const Login = ({ navigation }) => {
+const Profile = ({ route, navigation }) => {
 
+    const { screenName } = route.params;
     const [email, onChangeEmail] = useState('');
     const [password, onChangePassword] = useState('');
 
@@ -63,7 +65,9 @@ const Login = ({ navigation }) => {
             .then(() => {
                 console.log('User account signed in!');
                 // add params including screen name
-                navigation.navigate('bottomNavigation');
+                navigation.navigate('ToDoList', {
+                    screenName: 'ToDoList'
+                });
                 setLoadingText(false);
             })
             .catch(error => {
@@ -97,7 +101,7 @@ const Login = ({ navigation }) => {
 
   return (
     <View style={ styles.mainContainer }>
-        <Text style={ styles.appNameText }>Reminder App</Text>
+        <Toolbar title='ReminderApp' navigation={navigation} screenName={screenName}/>
         <TextInput
             style={ styles.textInput }
             onChangeText={text => fieldValueChangeFunc(text, emailTextInput, 'email')}
@@ -144,7 +148,6 @@ const Login = ({ navigation }) => {
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        justifyContent: 'center',
         alignItems: 'center'
     },
     placeholder: {
@@ -189,4 +192,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Login;
+export default Profile;

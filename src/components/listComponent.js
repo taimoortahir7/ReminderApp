@@ -96,7 +96,7 @@ const ToDoList = ({ route, navigation }) => {
 
   return (
     <View style={ styles.mainContainer }>
-      <Toolbar title='ReminderApp' subTitle='List of Tasks' navigation={navigation} screenName={screenName}/>
+      <Toolbar title='ReminderApp' navigation={navigation} screenName={screenName}/>
       <ScrollView
         contentContainerStyle={styles.scrollView}
         refreshControl={

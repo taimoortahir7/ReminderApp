@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TextInput, Button, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import {buttonColor, linkColor} from '../../assets/colors';
+import database from '@react-native-firebase/database';
 import {textInputChangeFunc, checkFieldsValidity} from './../commons/fieldsValidation';
 import auth from '@react-native-firebase/auth';
 import validation from './../../utils/errorMessages';
@@ -61,6 +62,19 @@ const Signup = ({ navigation }) => {
         }
     };
 
+    const addUserDB = () => {
+        const newReference = database().ref('Users').push();
+
+        newReference.set({
+            name: name,
+            email: email,
+            password: password
+        })
+        .then(() => {
+            console.log('User added!');
+        });
+    };
+
     const signup = () => {
         clearErrors();
         setLoadingText(true);
@@ -87,11 +101,9 @@ const Signup = ({ navigation }) => {
             .createUserWithEmailAndPassword(email, password)
             .then(() => {
                 console.log('User account created & signed in!');
+                addUserDB();
+                navigation.navigate('bottomNavigation');
                 setLoadingText(false);
-                // add params including screen name
-                navigation.navigate('ToDoList', {
-                    screenName: 'ToDoList'
-                });
             })
             .catch(error => {
                 if (error.code === 'auth/email-already-in-use') {

@@ -8,7 +8,7 @@
 
 import 'react-native-gesture-handler';
 import React from 'react';
-import ToDoList from './src/components/listComponent';
+import bottomNavigation from './src/components/bottomTabNavigator';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Login from './src/components/loginComponent';
@@ -27,7 +27,7 @@ const App: () => React$Node = () => {
           headerShown: false
         }}
       >
-        <Stack.Screen name='ToDoList' component={ToDoList}/>
+        <Stack.Screen name='bottomNavigation' component={bottomNavigation}/>
         <Stack.Screen name='Signup' component={Signup}/>
         <Stack.Screen name='Login' component={Login}/>
         <Stack.Screen name='AddTask' component={AddTask}/>
