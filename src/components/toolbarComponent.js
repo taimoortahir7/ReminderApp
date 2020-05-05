@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableHighlight } from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
-import IconFontisto from 'react-native-vector-icons/Fontisto';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import {secondaryColor, toolbarTouchHighlightColor, subTitleColor} from '../../assets/colors';
 
 const Toolbar = (props) => {
@@ -30,8 +29,12 @@ const Toolbar = (props) => {
         props.taskDataCallback('editData');
     };
 
-    const profileMenu = () => {
+    const profileEdit = () => {
+        props.editProfileCallBack();
+    };
 
+    const editDisabled = () => {
+        props.editDisabled();
     };
 
     const navigateToAddTask = () => {
@@ -52,12 +55,12 @@ const Toolbar = (props) => {
                         underlayColor={toolbarTouchHighlightColor}
                         style={ styles.backIcon }
                         >
-                            <Icon name="arrowleft" size={25} color="white"/>
+                            <IconAntDesign name="arrowleft" size={25} color="white"/>
                         </TouchableHighlight>
                     )
                 }
             </View>
-            <View style={ styles.infoContainer }>
+            <View style={ (props.screenName === 'AddTask' || props.screenName === 'EditTask') ? styles.infoContainer : styles.infoContainerMargin }>
                 <Text style={ styles.title }>{props.title}</Text>
                 {/* <Text style={ styles.subTitle }>{props.subTitle}</Text> */}
             </View>
@@ -70,18 +73,40 @@ const Toolbar = (props) => {
                     underlayColor={toolbarTouchHighlightColor}
                     style={ styles.backIcon }
                     >
-                        <Icon name="check" size={25} color="white"/>
+                        <IconAntDesign name="check" size={25} color="white"/>
                 </TouchableHighlight>)
             }
             {
-                (props.screenName === 'Profile') && (
+                (props.editEnabled) && (
                 <TouchableHighlight
-                    onPress={profileMenu}
+                    onPress={editDisabled}
                     activeOpacity={1}
                     underlayColor={toolbarTouchHighlightColor}
-                    style={ styles.menuIcon }
+                    style={ styles.backIcon }
                     >
-                        <IconFontisto name="more-v-a" size={23} color="white"/>
+                        <IconAntDesign name="close" size={25} color="white"/>
+                </TouchableHighlight>)
+            }
+            {
+                (props.editEnabled) && (
+                <TouchableHighlight
+                    onPress={editDisabled}
+                    activeOpacity={1}
+                    underlayColor={toolbarTouchHighlightColor}
+                    style={ styles.backIcon }
+                    >
+                        <IconAntDesign name="check" size={25} color="white"/>
+                </TouchableHighlight>)
+            }
+            {
+                (props.screenName === 'Profile' && !props?.editEnabled) && (
+                <TouchableHighlight
+                    onPress={profileEdit}
+                    activeOpacity={1}
+                    underlayColor={toolbarTouchHighlightColor}
+                    style={ styles.backIcon }
+                    >
+                        <IconAntDesign name="edit" size={25} color="white"/>
                 </TouchableHighlight>)
             }
             {
@@ -92,7 +117,7 @@ const Toolbar = (props) => {
                     underlayColor={toolbarTouchHighlightColor}
                     style={ styles.backIcon }
                     >
-                        <Icon name="plus" size={25} color="white"/>
+                        <IconAntDesign name="plus" size={25} color="white"/>
                 </TouchableHighlight>)
             
             }
@@ -112,16 +137,19 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center'
     },
+    infoContainerMargin: {
+        flex: 1,
+        justifyContent: 'center',
+        marginLeft: 30
+    },
     backIconContainer: {
-        padding: 15
+        paddingTop: 15,
+        paddingBottom: 15
     },
     backIcon: {
         borderRadius: 30,
-        padding: 15
-    },
-    menuIcon: {
-        borderRadius: 50,
-        padding: 15, 25
+        padding: 15,
+        marginHorizontal: 5
     },
     title: {
         fontSize: 23,

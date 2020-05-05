@@ -4,6 +4,7 @@ import {buttonColor, linkColor, secondaryColor} from '../../assets/colors';
 import {textInputChangeFunc, checkFieldsValidity} from './../commons/fieldsValidation';
 import auth from '@react-native-firebase/auth';
 import validation from './../../utils/errorMessages';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const Login = ({ navigation }) => {
 
@@ -23,6 +24,15 @@ const Login = ({ navigation }) => {
     
     const navigateToSignup = () => {
         navigation.navigate('Signup');
+    };
+
+    const storeData = async (identity) => {
+        try {
+          await AsyncStorage.setItem('@name', identity.user._user.displayName);
+          await AsyncStorage.setItem('@email', identity.user._user.email);
+        } catch (e) {
+          // saving error
+        }
     };
 
     const clearErrors = () => {
@@ -60,8 +70,9 @@ const Login = ({ navigation }) => {
         if(checkFieldsValidity(fields)) {
             auth()
             .signInWithEmailAndPassword(email, password)
-            .then(() => {
+            .then((identity) => {
                 console.log('User account signed in!');
+                storeData(identity);
                 // add params including screen name
                 navigation.navigate('bottomNavigation');
                 setLoadingText(false);

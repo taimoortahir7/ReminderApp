@@ -10,7 +10,8 @@ const Tab = createBottomTabNavigator();
 const TabNavigator = () => {
     return (
         <Tab.Navigator initialRouteName='ToDoList' backBehavior='initialRoute' tabBarOptions={{
-            activeTintColor: buttonColor
+            activeTintColor: buttonColor,
+            showLabel: false
         }}>
             <Tab.Screen name="ToDoList" component={ToDoList} initialParams={ {screenName: 'ToDoList'} } options={{
                 tabBarLabel: 'Home',

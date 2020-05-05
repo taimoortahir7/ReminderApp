@@ -5,6 +5,7 @@ import database from '@react-native-firebase/database';
 import {textInputChangeFunc, checkFieldsValidity} from './../commons/fieldsValidation';
 import auth from '@react-native-firebase/auth';
 import validation from './../../utils/errorMessages';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const Signup = ({ navigation }) => {
 
@@ -26,6 +27,15 @@ const Signup = ({ navigation }) => {
 
     const navigateToLogin = () => {
         navigation.navigate('Login');
+    };
+
+    const storeData = async (identity) => {
+        try {
+          await AsyncStorage.setItem('@name', identity.user._user.displayName);
+          await AsyncStorage.setItem('@email', identity.user._user.email);
+        } catch (e) {
+          // saving error
+        }
     };
 
     const clearErrors = () => {
@@ -60,6 +70,10 @@ const Signup = ({ navigation }) => {
             //     });
             // }
         }
+    };
+
+    const saveUserName = (identity) => {
+        identity.user._user.displayName = name;
     };
 
     const addUserDB = () => {
@@ -99,8 +113,10 @@ const Signup = ({ navigation }) => {
         if(checkFieldsValidity(fields)) {
             auth()
             .createUserWithEmailAndPassword(email, password)
-            .then(() => {
+            .then((identity) => {
                 console.log('User account created & signed in!');
+                saveUserName(identity);
+                storeData(identity);
                 addUserDB();
                 navigation.navigate('bottomNavigation');
                 setLoadingText(false);
