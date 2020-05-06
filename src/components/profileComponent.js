@@ -22,6 +22,7 @@ const Profile = ({ route, navigation }) => {
     const [wrongEmailField, onWrongEmailField] = useState(false);
 
     const [loadingActivity, setLoadingActivity] = useState(true);
+    const [loadingText, setLoadingText] = useState(false);
 
     let emailTextInput, nameTextInput;
 
@@ -74,6 +75,17 @@ const Profile = ({ route, navigation }) => {
             onChangeEmptyPasswordField(textInputChangeFunc(text, titleTextInput));
             onChangePassword(text);
         }
+    };
+
+    const signOutFirebase = () => {
+        setLoadingText(true);
+        auth()
+        .signOut()
+        .then(() => {
+            console.log('User signed out!');
+            navigation.navigate('Login');
+            setLoadingText(false);
+        });
     };
 
     // const getData = async () => {
@@ -179,6 +191,22 @@ const Profile = ({ route, navigation }) => {
             {invalidEmailField && <Text style={ styles.errorMessage }>{validation.email.incorrect.message}</Text>}
             {wrongEmailField && <Text style={ styles.errorMessage }>{validation.email.wrong.message}</Text>}
 
+            <TouchableOpacity style={ styles.placeholderButton } onPress={signOutFirebase}>
+            {
+                !loadingText && (
+                    <Text style={ styles.buttonText }>SIGN OUT</Text>
+                )
+            }
+            {
+                loadingText && (
+                <View style={ styles.loadingState }>
+                    <Text style={ styles.buttonText }>SIGNING OUT...</Text>
+                    <ActivityIndicator size="small" color='white' />
+                </View>
+                )
+            }
+            </TouchableOpacity>
+
             </View>
           )
         }
@@ -194,7 +222,8 @@ const styles = StyleSheet.create({
     },
     profileContainer: {
         flex: 1,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        alignItems: 'center'    
     },
     placeholder: {
         width: 100,
