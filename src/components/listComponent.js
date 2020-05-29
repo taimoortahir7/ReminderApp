@@ -6,6 +6,8 @@ import Toolbar from './toolbarComponent';
 import Placeholder from './placeholderComponent';
 import database from '@react-native-firebase/database';
 import {primaryColor, secondaryColor, buttonColor} from '../../assets/colors';
+import Sound from 'react-native-sound';
+import ReactGlobe from 'react-globe';
 
 const ToDoList = ({ route, navigation }) => {
 
@@ -17,6 +19,8 @@ const ToDoList = ({ route, navigation }) => {
   const [listItem, setListItem] = useState();
   const [listItemIndex, setListItemIndex] = useState();
   var dataArray = [];
+
+  var sound;
 
   function handleBackButtonClick() {
     navigation.goBack();
@@ -44,6 +48,20 @@ const ToDoList = ({ route, navigation }) => {
         item.key = snap.key;
 
         dataArray.push(item);
+      });
+
+      sound = new Sound(require('./../../assets/music/prankMusic.mp3'), (err, soun) => {
+        if (err) {
+          alert('error!!!');
+        }
+        sound.play(() => {
+          sound.release();
+        });
+        setTimeout(() => {
+          sound.stop(() => {
+            // sound.release();
+          });
+        }, 5000);
       });
 
       setData(dataArray);
