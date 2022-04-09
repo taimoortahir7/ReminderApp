@@ -21,7 +21,7 @@
     "@react-navigation/drawer": "^5.5.0",
     "@react-navigation/native": "^5.1.6",
     "@react-navigation/stack": "^5.2.12",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "react": "16.11.0",
     "react-native": "0.62.1",
     "react-native-alarm-notification": "^1.4.5",
